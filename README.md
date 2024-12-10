@@ -22,3 +22,7 @@ The app uses AES-GCM encryption ensuring:
 - **Integrity**: The authentication tag ensures the data has not been tampered with.
 - **Uniqueness**: The IV ensures different ciphertexts are generated for the same secret.
 
+
+### DEMO
+[Visit Demo](https://secrets-locker-9b84a42af80f.herokuapp.com)
+
