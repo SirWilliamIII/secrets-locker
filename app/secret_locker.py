@@ -4,15 +4,6 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from os import urandom
 
 
-kms_client = boto3.client("kms", region_name=os.getenv("AWS_REGION", "us-east-1"))
-
-session = boto3.Session(
-    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
-    region_name=os.getenv("AWS_REGION", "us-east-1")
-)
-print("AWS Session created successfully!")
-
 class SecretLocker:
 	def __init__(self, key: bytes):
 		self.key = key
@@ -30,10 +21,15 @@ class SecretLocker:
 		return (decryptor.update(ciphertext) + decryptor.finalize()).decode()
 
 
-kms_key_id = 'arn:aws:kms:us-east-1:058264264506:key/4658b1f4-5738-46e2-b923-291fe25e4260'
+kms_key_id = os.getenv("KMS_KEY_ID")
 
 # Initialize AWS KMS client
-kms_client = boto3.client("kms")
+kms_client = boto3.client(
+    "kms",
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+    region_name=os.getenv("AWS_REGION", "us-east-1")
+)
 
 # Generate a Data Encryption Key (DEK)
 response = kms_client.generate_data_key(KeyId=kms_key_id, KeySpec="AES_256")
