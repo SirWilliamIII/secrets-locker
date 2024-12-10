@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secret-keeper
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: secret-keeper
+  template:
+    metadata:
+      labels:
+        app: secret-keeper
+    spec:
+      containers:
+      - name: secret-keeper
+        image: secret-keeper:latest
+        env:
+        - name: KMS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: kms-secret
+              key: kms_key_id
+        ports:
+        - containerPort: 5000
