@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: secret-keeper
+  name: secrets-locker
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: secret-keeper
+      app: secrets-locker
   template:
     metadata:
       labels:
-        app: secret-keeper
+        app: secrets-locker
     spec:
       containers:
-      - name: secret-keeper
-        image: secret-keeper:latest
+      - name: secrets-locker
+        image: secrets-locker:latest
         env:
         - name: KMS_KEY_ID
           valueFrom:
