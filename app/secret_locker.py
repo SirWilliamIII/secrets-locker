@@ -4,6 +4,8 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from os import urandom
 
 
+kms_client = boto3.client("kms", region_name="us-east-1")
+
 class SecretLocker:
 	def __init__(self, key: bytes):
 		self.key = key
