@@ -13,6 +13,7 @@ app = Flask(__name__)
 # Initialize AWS KMS client
 kms_client = boto3.client("kms")
 
+port = int(os.getenv("PORT", 5000))
 
 # Fetch the KMS Key ID from the environment variable
 kms_key_id = os.getenv("KMS_KEY_ID")
@@ -67,4 +68,4 @@ def store_secret():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=port)
