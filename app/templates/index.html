@@ -1,87 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Secrets Locker</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+  </head>
+  <body class="bg-light">
     <div class="container mt-5">
-        <h1 class="text-center">Secrets Locker</h1>
-        <p class="text-center">Securely store and retrieve your secrets.</p>
-
-        <!-- Store Secret Form -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Store a Secret</h5>
-                <form id="store-form">
-                    <div class="mb-3">
-                        <label for="secret" class="form-label">Secret</label>
-                        <input type="text" class="form-control" id="secret" placeholder="Enter your secret">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Store Secret</button>
-                </form>
+      <h1 class="text-center">Secure Secrets Encoder & Decoder</h1>
+      <p class="text-center">Securely store and retrieve your secrets.</p>
+      <!-- Store Secret Form -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Your Secret Message</h5>
+          <form id="store-form">
+            <div class="mb-3">
+              <label for="secret" class="form-label">Message</label>
+              <input
+                type="text"
+                class="form-control"
+                id="secret"
+                placeholder="Enter your secret"
+              />
+              <p class="text-muted mt-3">
+                <small>
+                  The secret key will be shown below once clicked. Guard this
+                  secret key with your life and enter the values in the
+                  associated fields to retrieve it later.
+                </small>
+              </p>
+              <button type="submit" class="btn btn-primary">
+                Get Secret Key
+              </button>
             </div>
+          </form>
         </div>
+      </div>
 
-        <!-- Retrieve Secret Form -->
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Retrieve a Secret</h5>
-                <form id="retrieve-form">
-                    <div class="mb-3">
-                        <label for="ciphertext" class="form-label">Ciphertext</label>
-                        <textarea class="form-control" id="ciphertext" rows="3" placeholder="Enter ciphertext"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="iv" class="form-label">Initialization Vector (IV)</label>
-                        <input type="text" class="form-control" id="iv" placeholder="Enter IV">
-                    </div>
-                    <div class="mb-3">
-                        <label for="tag" class="form-label">Tag</label>
-                        <input type="text" class="form-control" id="tag" placeholder="Enter Tag">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Retrieve Secret</button>
-                </form>
+      <!-- Retrieve Secret Form -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Retrieve a Secret</h5>
+          <form id="retrieve-form">
+            <div class="mb-3">
+              <label for="ciphertext" class="form-label"
+                >Ciphertext: your encrypted message</label
+              >
+              <textarea
+                class="form-control"
+                id="ciphertext"
+                rows="3"
+                placeholder="Enter ciphertext here"
+              >
+              </textarea>
+
+              <label for="iv" class="form-label"
+                >Initialization Vector (IV):
+              </label>
+
+              <input
+                type="text"
+                class="form-control"
+                id="iv"
+                placeholder="Enter IV here"
+              />
             </div>
-        </div>
 
-        <div id="response" class="mt-4"></div>
+            <div class="mb-3">
+              <label for="tag" class="form-label"
+                >Tag:
+                <small>
+                  computed code during the ciphertext + secret message
+                  encryption process ensuring data integrity
+                </small>
+              </label>
+
+              <input
+                type="text"
+                class="form-control"
+                id="tag"
+                placeholder="Enter tag here"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Retrieve Secret
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div id="response" class="mt-4"></div>
     </div>
 
     <script>
-        const storeForm = document.getElementById("store-form");
-        const retrieveForm = document.getElementById("retrieve-form");
-        const responseDiv = document.getElementById("response");
+      const storeForm = document.getElementById("store-form");
+      const retrieveForm = document.getElementById("retrieve-form");
+      const responseDiv = document.getElementById("response");
 
-        storeForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const secret = document.getElementById("secret").value;
+      storeForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const secret = document.getElementById("secret").value;
 
-            const response = await fetch("/store", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ secret }),
-            });
-            const data = await response.json();
-            responseDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        const response = await fetch("/store", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ secret }),
         });
+        const data = await response.json();
+        responseDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      });
 
-        retrieveForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const ciphertext = document.getElementById("ciphertext").value;
-            const iv = document.getElementById("iv").value;
-            const tag = document.getElementById("tag").value;
+      retrieveForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const ciphertext = document.getElementById("ciphertext").value;
+        const iv = document.getElementById("iv").value;
+        const tag = document.getElementById("tag").value;
 
-            const response = await fetch("/retrieve", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ciphertext, iv, tag }),
-            });
-            const data = await response.json();
-            responseDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        const response = await fetch("/retrieve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ciphertext, iv, tag }),
         });
+        const data = await response.json();
+        responseDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      });
     </script>
-</body>
+  </body>
 </html>

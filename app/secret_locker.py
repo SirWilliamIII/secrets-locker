@@ -30,6 +30,7 @@ kms_key_id = os.getenv("KMS_KEY_ID")
 if not all([os.getenv("AWS_ACCESS_KEY_ID"), os.getenv("AWS_SECRET_ACCESS_KEY"), os.getenv("KMS_KEY_ID")]):
 	raise EnvironmentError("Please set the AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and KMS_KEY_ID environment variables.")
 
+
 # Initialize AWS KMS client
 kms_client = boto3.client(
 	"kms",
@@ -46,13 +47,4 @@ dek_ciphertext = response["CiphertextBlob"]  # Store this securely for later use
 # Initialize the Secret Keeper with the plaintext DEK
 secret_keeper = SecretLocker(key=dek_plaintext)
 
-# Example usage
-plaintext = "My super secret data"
-encrypted = secret_keeper.encrypt(plaintext)
-print("Encrypted data:", encrypted)
 
-# To decrypt later, decrypt the encrypted DEK using KMS
-dek_plaintext = kms_client.decrypt(CiphertextBlob=dek_ciphertext)["Plaintext"]
-secret_keeper = SecretLocker(key=dek_plaintext)
-decrypted = secret_keeper.decrypt(encrypted["ciphertext"], encrypted["iv"], encrypted["tag"])
-print("Decrypted data:", decrypted)
